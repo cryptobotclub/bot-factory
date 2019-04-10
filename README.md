@@ -45,7 +45,7 @@ Under the `bots` diredcory are a few basic bots you can use as a starting point.
 
 This app allow to backtest your bots locally, against different feeds and time intervals, before you run them on [https://www.cryptotradrs.io/strategies](https://www.cryptotradrs.io/strategies). 
 
-1. Point your browser to http://localhost:8081/ to access the app.
+1. Point your browser to http://localhost:3030/ to access the app.
 
 
 
