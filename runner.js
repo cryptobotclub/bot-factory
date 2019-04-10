@@ -233,12 +233,6 @@ async function exec(code, botSettings, datafeedSettings, positionSettings) {
         console.log("datafeeds: ", datafeeds);
         let feedsData = await fetchAllFeeds(datafeeds, dateFrom, dateTo);
     
-        console.log("feedsData: ", feedsData.length);
-        feedsData.forEach( (feed, idx) => {
-            console.log("candles: ", idx, feed.candles.length);
-            console.log(idx, "feed: ", feed.symbol, feed.interval, feed.candles[0], feed.candles[feed.candles.length-1] );
-        })
-
     
         return new Promise( (resolve, reject) => {
 
@@ -252,11 +246,6 @@ async function exec(code, botSettings, datafeedSettings, positionSettings) {
             lastTick = candle;
             let slice = getSlice(feedsData, candle.closeDate);
       
-            slice.forEach(feed => {
-                let last = feed.candles[feed.candles.length-1];
-                console.log(">> feed ", feed.symbol, feed.interval, "date: ", candle.closeDate.toISOString(), "candles: ", feed.candles.length, "close: ", last ? last.closeDate.toISOString() : 'n/a' ) ;
-            })
-         
             // update bot open position
             bot.positions = positions.slice(0); // clone
             updatePositions(candle);
