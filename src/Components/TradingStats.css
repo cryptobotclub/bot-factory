@@ -1,0 +1,28 @@
+
+
+
+.bot-performance-title {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 120%;
+    font-weight: 120%;
+    overflow: hidden;
+}
+
+.bot-performance-value {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 100%;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.bot-performance-value.green {
+    color: green;
+}
+ 
+.bot-performance-value.red {
+     color: red;
+}

@@ -1,0 +1,63 @@
+/* You can add global styles to this file, and also import other style files */
+/*
+Template:  Webmin - React JS Admin Dashboard Template
+Author: potenzaglobalsolutions.com
+Design and Developed by: potenzaglobalsolutions.com
+
+NOTE: This file includes all admin Template plugins and Shortcodes. If you don't want to use any plugins from below. You can simply remove that line from this file.
+*/
+
+/*
+================================================
+[  Table of contents  ]
+================================================
+
+1. Variables
+2. Mixins
+3. Helpers
+4. Typography
+5. Components
+	- Accordion
+	- Button
+	- Lists
+	- Nice Select
+	- Pricing
+	- Social Icon
+	- Tabs
+	- Owl Carousel
+6. Sidebar
+7. Layout
+8. Responsive
+
+======================================
+[ End table content ]
+======================================
+*/
+
+
+
+/*Global*/
+@import "assets/scss/variables";
+@import "assets/scss/mixins";
+@import "assets/scss/helpers";
+@import "assets/scss/typography";
+
+/*Shortcodes*/
+@import "assets/scss/components/accordion";
+@import "assets/scss/components/button";
+@import "assets/scss/components/list-style";
+@import "assets/scss/components/social-icons";
+@import "assets/scss/components/tabs";
+@import "assets/scss/components/calendar";
+
+@import "assets/scss/components/date-picker.scss";
+@import "~react-datepicker/dist/react-datepicker.css";
+
+
+/*layout*/
+@import "assets/scss/sidebar";
+@import "assets/scss/layout";
+@import "assets/scss/responsive";
+@import "assets/scss/app";
+
+
