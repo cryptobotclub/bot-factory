@@ -1,16 +1,13 @@
 class Bot {
 
 
-    process(candle) {
+    process(candle, slice) {
+              
+        let candles = slice[0].candles; // 4h
         
-         let highs = this.state.candles.map(p => p.high);
-         let lows = this.state.candles.map(p => p.low);
-         let closes = this.state.candles.map(p => p.close);
-         let volumes = this.state.candles.map(p => p.volume);
- 
          let data = BollingerBands.calculate({
             period : 14, 
-            values: closes,
+            values: candles.map(p => p.close),
             stdDev : 2,
          });
 

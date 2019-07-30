@@ -155,7 +155,6 @@ class NewPositionSettings extends React.Component {
 
     updatePositionStrategyPlaceholder = (strategyId, currency, counterCurrency) => {
 
-        console.log("updatePositionStrategyPlaceholder: ", strategyId, currency, counterCurrency )
         if (strategyId === 'RISK')  {
             this.setState({
                 positionStrategyValuePlaceHolder: counterCurrency,
@@ -289,7 +288,7 @@ class NewPositionSettings extends React.Component {
         return (
             <Card className="mt-0 mb-0 h-350">
                 <CardBody >
-                <CardTitle >Trade Settings {!this.state.error && <label>✅</label>} </CardTitle>
+                <CardTitle >Trade Settings {this.state.error && <label>⚠️</label>} </CardTitle>
     
                     <div className="bot-config-position-selection">
                     <div>Strategy </div> <div>Amount</div>
@@ -318,7 +317,7 @@ class NewPositionSettings extends React.Component {
                         value={this.state.takeProfit} name="profit" onChange={this.handleProfitAmountChange} />
                 
                     <div>Trailing Stop </div> <div></div>
-                    <div className="bot-trailing-stop-switch"> 
+                    <div> 
                         <Switch
                             onChange={this.handleTrailingStopChange}
                             checked={this.state.trailingStop}

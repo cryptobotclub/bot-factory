@@ -7,13 +7,9 @@ class BotPnLChart extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("BotPnLChart()  ", props);
     }
 
     componentWillMount() {
-
-        console.log("BotPnLChart.componentWillMount ", this.props);
-
         this.setState({
             chartData: {}
         });
@@ -213,8 +209,6 @@ class BotPnLChart extends React.Component {
         // if ( !this.state.chartData ) {
         //     return <div />
         // }
-
-        console.log("BotPnLChart render() ", this.state);
 
         return (
 

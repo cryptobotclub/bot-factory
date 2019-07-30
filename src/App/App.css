@@ -28,20 +28,6 @@
 }
 
 
-/* .bot-editor-controllers-wrapper {
-
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content:center;
-  border: 1px solid darkgray;
-  padding-top: 10px;
-  padding-bottom: 10px;
- 
-  margin-top: 10px;
-  margin-bottom: 10px;
-} */
-
 .bot-strategy-select {
  
   display: grid;
@@ -133,14 +119,6 @@ input, select {
   width: 100%;
 }
 
-/* .bot-datafeed-section > div {
-  margin-top: 5px;
-} */
-
-.bot-editor-control-datepicker {
-  border: 1px solid lightgray;
-  text-align: right;
-}
 
 .bot-editor-controllers-wrapper > div {
   /* border: 1px solid red; */
@@ -298,6 +276,9 @@ input, select {
   color: lightgray;
 }
 
+.react-datepicker-wrapper > div > input {
+  height: 35px;
+}
 
 @media (max-width: 1124px) {
   .bot-editor-controllers-wrapper  {
@@ -309,3 +290,6 @@ input, select {
     grid-template-columns: 1fr;
   }
 }
+
+
+

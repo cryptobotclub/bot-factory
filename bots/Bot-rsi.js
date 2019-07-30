@@ -1,9 +1,8 @@
 class Bot {
 
-
-    process(candle) {
+    process(candle, slice) {
         
-        let closes = this.state.candles.map(p => p.close);
+        let closes = slice[0].candles.map(p => p.close);
         
         // calculate rsi for all prices  
         let response = RSI.calculate({
@@ -20,8 +19,6 @@ class Bot {
             signal({
                 signal: 'BUY',
                 info: 'rsi: '+rsi,
-                risk: 5,
-                stop: candle.close * 0.99,
             })
         }
 
@@ -29,8 +26,6 @@ class Bot {
             signal({
                 signal:'SELL',
                 info: 'rsi: '+rsi,
-                risk: 5,
-                stop: candle.close * 1.01,
             })
         }
 

@@ -85,6 +85,8 @@ fetchStateFromLocalStorage() {
   let interval = localStorage.getItem("datafeedSettings.interval");
   let dateToS = localStorage.getItem("datafeedSettings.dateTo");
   let dateFromS = localStorage.getItem("datafeedSettings.dateFrom");
+  let rollingWindowSize = localStorage.getItem("datafeedSettings.rollingWindowSize");
+  
 
   let value = localStorage.getItem("positionSettings.value");
   let stopLoss = localStorage.getItem("positionSettings.stopLoss");
@@ -114,6 +116,7 @@ fetchStateFromLocalStorage() {
       counterCurrency: symbol ? this.feedCounterCurrency(symbol) : '',
       dateFrom: dateFrom,
       dateTo: dateTo,
+      rollingWindowSize: rollingWindowSize === null ? undefined : rollingWindowSize,
     },
 
     positionSettings: {
@@ -129,12 +132,11 @@ fetchStateFromLocalStorage() {
 
 saveStateToLocalStorage(botSettings, datafeedSettings, positionSettings) {
 
-  console.log("saveStateToLocalStorage: ", positionSettings)
   if (botSettings) { 
      botSettings.botId && localStorage.setItem("botSettings.botId", botSettings.botId);
      botSettings.balanceAmount && localStorage.setItem("botSettings.balanceAmount", botSettings.balanceAmount);
      botSettings.exchangeFeesAmount && localStorage.setItem("botSettings.exchangeFeesAmount", botSettings.exchangeFeesAmount);
-     botSettings.tradeSideLongOnly && localStorage.setItem("botSettings.tradeSideLongOnly", botSettings.tradeSideLongOnly);
+     botSettings.tradeSideLongOnly !== undefined && localStorage.setItem("botSettings.tradeSideLongOnly", botSettings.tradeSideLongOnly);
   }
 
   if (datafeedSettings) {
@@ -142,6 +144,7 @@ saveStateToLocalStorage(botSettings, datafeedSettings, positionSettings) {
       datafeedSettings.interval && localStorage.setItem("datafeedSettings.interval", datafeedSettings.interval);
       datafeedSettings.dateFrom && localStorage.setItem("datafeedSettings.dateFrom", datafeedSettings.dateFrom.toISOString());
       datafeedSettings.dateTo && localStorage.setItem("datafeedSettings.dateTo", datafeedSettings.dateTo.toISOString());
+      datafeedSettings.rollingWindowSize && localStorage.setItem("datafeedSettings.rollingWindowSize", datafeedSettings.rollingWindowSize);
   }
 
   if (positionSettings) { 
@@ -166,6 +169,8 @@ storeValue = (key, value) => {
 backtest = (event) => {
 
   let secsInDay = 60 * 60 * 24;
+
+  let dateFrom = this.state.datafeedSettings.dateFrom;
   let dateTo = this.state.datafeedSettings.dateTo;
 
   // round up the the end of the day
@@ -179,8 +184,9 @@ backtest = (event) => {
     dateFrom: this.state.datafeedSettings.dateFrom.toISOString(), 
     dateTo: roundedUpDate.toISOString(), 
     interval: this.state.datafeedSettings.interval,
+    rollingWindowSize: Number(this.state.datafeedSettings.rollingWindowSize),
   }
-  console.log("backtest - datafeedSettings: ", datafeedSettings, "botSettings :", botSettings, "positionSettings: ", positionSettings);
+  //console.log("backtest - datafeedSettings: ", datafeedSettings, "botSettings :", botSettings, "positionSettings: ", positionSettings);
  
   this.executeCode(botSettings, datafeedSettings, positionSettings)
  
@@ -232,7 +238,7 @@ executeCode(botSettings, datafeedSettings, positionSettings)  {
       }
 
       this.setState({
-          positions: closedPositions,
+          positions: closedPositions.reverse(),
           candles: candles,
           userCharts: userCharts,
           chartInput: chartInput,
@@ -448,7 +454,8 @@ render() {
                  interval={this.state.datafeedSettings.interval} 
                  dateFrom={this.state.datafeedSettings.dateFrom} 
                  dateTo={this.state.datafeedSettings.dateTo}
-
+                 rollingWindowSize={this.state.datafeedSettings.rollingWindowSize}
+                 
                  onChange={this.saveDataFeedSettings}
             />
    
@@ -479,12 +486,6 @@ render() {
         </div>
     
 
-    
-        {this.state.error && 
-        <Alert variant="danger"> 
-            {this.state.error}
-        </Alert>}    
-
         {this.state.running && 
         <div className="bot-editor-charts-loading"> 
                 <PacmanLoader
@@ -496,17 +497,24 @@ render() {
                     loading={this.state.running}
                 />
         </div>}
-        
-        {!this.state.running && this.state.candles && 
-                <TradingStats 
-                    fees={this.state.botSettings.exchangeFeesAmount}
-                    positions={this.state.positions} 
-                    candles={this.state.candles}  
-                    currency={this.state.datafeedSettings.currency}  
-                    counterCurrency={this.state.datafeedSettings.counterCurrency} 
-                    accountCurrency=''
-                  /> }
+    
+        {this.state.error && 
+        <Alert variant="danger"> 
+            {this.state.error}
+        </Alert>}    
 
+       {this.state.candles && 
+        <TradingStats 
+            fees={this.state.botSettings.exchangeFeesAmount}
+            positions={this.state.positions} 
+            candles={this.state.candles}  
+            currency={this.state.datafeedSettings.currency}  
+            counterCurrency={this.state.datafeedSettings.counterCurrency} 
+            accountCurrency=''
+          /> }
+
+
+        
 <br/>
 
   {!this.state.chartInput && <Alert variant="light" style={{height: 100}}>  Results of your backtest will show here.</Alert>}

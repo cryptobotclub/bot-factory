@@ -1,5 +1,3 @@
-
-
 import React from 'react'
 import Switch from 'react-switch'
 import { Card, CardBody, CardTitle } from 'reactstrap';
@@ -8,7 +6,6 @@ import {Alert} from "react-bootstrap"
 
 
 class BotSettings extends React.Component {
-
 
     constructor(props) {
         super(props);
@@ -145,8 +142,6 @@ class BotSettings extends React.Component {
             tradeSideLongOnly: tradeSideLongOnly,
         }
 
-        console.log("updateBotSettingsState: ", state);
-
         this.setState(state)
         this.props.onChange(state);
     }
@@ -167,7 +162,7 @@ class BotSettings extends React.Component {
        
             <Card className="mt-0 mb-0 h-350">
                 <CardBody >
-                <CardTitle >Bot Settings {!this.state.error && <label>✅</label>} </CardTitle>
+                <CardTitle >Bot Settings {this.state.error && <label>⚠️</label>} </CardTitle>
   
                     <div className="bot-strategy-select"> 
 

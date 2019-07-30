@@ -1,33 +1,46 @@
 
 class Bot {
 
+    constructor() {
+        this.datafeeds = [
+            {
+                exchange: "BINANCE",
+                symbol: "BTCUSDT",
+                interval: "1d",
+                rollingWindowSize: 20,
+            }
+        ]
+        this.count = 0;
+    }
+
     
     process(candle, slice) {
         
-        let candles0 = slice[0].candles; // 4h
+        let candles0 = slice[1].candles;
 
         let closes = candles0.map(p => p.close);
+        let resp = SMA.calculate({period : 10, values : closes});
 
-        let resp = this.macdSignal({
-            closes: closes,
-        }); 
- 
-        this.plot("macd", resp.macd, resp.macdSignal);
-    
-        let buy = resp.signal > 0;
-        let sell = resp.signal < 0;
+        let close0 = closes[closes.length-1];
+        let sma0 = resp[resp.length-1];
+        
+        //console.log("closes: ", this.count++, "size: ", closes.length, "close0: ", close0, "sma0", sma0);
+        this.plot("sma", sma0 ? sma0 : 0);
+
+        let buy = close0 > sma0;
+        let sell = close0 < sma0;
 
         if (buy) {
             this.signal({
                 signal: 'BUY',
-                info: 'macd: '+resp.macd + ", signal: "+resp.macdSignal,
+                info: 'close: ' + close0 + ", sma0: "+sma0,
             })
         }
 
         if (sell) {
             this.signal({
                 signal: 'SELL',
-                info: 'macd: '+resp.macd + ", signal: "+resp.macdSignal,
+                info: 'close: ' + close0 + ", sma0: "+sma0,
             })
         }
         
@@ -43,10 +56,10 @@ class Bot {
                 SimpleMASignal    : false,
                 values            : input.closes,
         });
-        console.log("response", response);
-
-        let lastMACD = response[response.length-1];
-        let prevMACD = response[response.length-2];
+        
+        let lastMACD = response.pop();
+        let prevMACD = response.pop();
+        
         
         if (lastMACD && prevMACD) {
   

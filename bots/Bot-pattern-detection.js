@@ -6,7 +6,19 @@ class Bot {
                 exchange: "BINANCE",
                 symbol: "BTCUSDT",
                 interval: "2h",
-                rollingWindowSize: 160,
+                rollingWindowSize: 50,
+            },
+            {
+                exchange: "BINANCE",
+                symbol: "BTCUSDT",
+                interval: "1h",
+                rollingWindowSize: 100,
+            },
+            {
+                exchange: "BINANCE",
+                symbol: "BTCUSDT",
+                interval: "4h",
+                rollingWindowSize: 14,
             }
         ]
     }
@@ -18,7 +30,6 @@ class Bot {
     
         var bullishengulfingpattern =require('technicalindicators').bullishengulfingpattern;
         var bearishengulfingpattern = require('technicalindicators').bearishengulfingpattern;
-
 
         let candles0 = slice[0].candles;
 

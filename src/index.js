@@ -7,8 +7,6 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import "shards-ui/dist/css/shards.min.css"
 import "./shards-dashboard/styles/shards-dashboards.1.1.0.min.css";
-
-
 import './styles.scss'; 
 
 

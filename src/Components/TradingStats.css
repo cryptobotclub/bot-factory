@@ -26,3 +26,15 @@
 .bot-performance-value.red {
      color: red;
 }
+
+.stats-small--1 .stats-small__value {
+    font-size: 1.4rem;
+    min-width: 120px;
+    text-align: center;
+}
+
+.stats-small--1 .stats-small__percentage {
+    font-size: 1.3rem;
+    min-width: 120px;
+    text-align: center;
+}

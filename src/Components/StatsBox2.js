@@ -23,7 +23,7 @@ class StatsBox2 extends React.Component {
     );
 
     const cardBodyClasses = classNames(
-      variation === "1" ? "p-0 d-flex" : "px-0 pb-0"
+      variation === "1" ? "m-2 p-0 d-flex" : "px-0 pb-0"
     );
 
     const innerWrapperClasses = classNames(

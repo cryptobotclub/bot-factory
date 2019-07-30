@@ -5,14 +5,14 @@ class Bot {
             {
                 exchange: "BINANCE",
                 symbol: "BTCUSDT",
-                interval: "15m",
-                rollingWindowSize: 160,
+                interval: "4h",
+                rollingWindowSize: 20,
             },
             {
                 exchange: "BINANCE",
                 symbol: "BTCUSDT",
-                interval: "4h",
-                rollingWindowSize: 10,
+                interval: "1d",
+                rollingWindowSize: 20,
             }
         ]
     }
@@ -41,33 +41,60 @@ class Bot {
     }
     
     
-    process(candle) {
+    process(candle, slice) {
     
-        if (this.state.candles.length < 1) return;
-    
-        let high = this.state.candles.map(p => p.high);
-        let low = this.state.candles.map(p => p.low);
-        let close = this.state.candles.map(p => p.close);
-    
-        
-        let supertrend = this.supertrend(candle, {
-          high: high,
-          low: low,
-          close: close,
-          period: 14
+        let candles0 = slice[0].candles;
+        let candles1 = slice[1].candles;
+        let candles2 = slice[2].candles;
+
+        if (candles0.length < 1) return;
+        if (candles1.length < 1) return;
+        if (candles2.length < 1) return;
+
+        let last0 = candles0[candles0.length-1];
+        let last1 = candles1[candles1.length-1];
+        let last2 = candles2[candles2.length-1];
+
+
+        let supertrend0 = this.supertrend(last0, {
+            high: candles0.map(p => p.high),
+            low: candles0.map(p => p.low),
+            close: candles0.map(p => p.close),
+            period: 14
         });
        
-        this.plot("supertrend", supertrend);
+        
+        let supertrend1 = this.supertrend(last1, {
+            high: candles1.map(p => p.high),
+            low: candles1.map(p => p.low),
+            close: candles1.map(p => p.close),
+            period: 14
+        });
+         
+      
+        let supertrend2 = this.supertrend(last2, {
+            high: candles2.map(p => p.high),
+            low: candles2.map(p => p.low),
+            close: candles2.map(p => p.close),
+            period: 14
+        });
 
-        if (supertrend === 1)  {
+        let sum = supertrend0 + supertrend1 + supertrend2;
+        this.plot("supertrend", sum, supertrend0, supertrend1, supertrend2);
+
+        let info = "Supertrend: [" + supertrend0 + ", " + supertrend1 + ", " + supertrend2+"]";
+
+        if (supertrend0 === 1 && supertrend1 === 1 && supertrend2 === -1)  {
             this.signal({
                 signal: 'BUY',
+                info: info,
             })
         }
       
-        if (supertrend === -1)  {
+        if ( supertrend0 === -1 && supertrend1 === -1 && supertrend2 === 1 )  {
             this.signal({
                 signal: 'SELL',
+                info: info,
             });
         }
           

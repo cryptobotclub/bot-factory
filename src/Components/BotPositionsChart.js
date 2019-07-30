@@ -41,7 +41,7 @@ class BotPositionsChart extends React.Component {
     
         positions.forEach( position => {
             
-            console.log("makePositionMap - ", secsInInterval, position);
+            //console.log("makePositionMap - ", secsInInterval, position);
 
             let createdDate = position.openDate;
             if (createdDate) {
@@ -54,7 +54,7 @@ class BotPositionsChart extends React.Component {
    
             let closedDate = position.closedDate ?  position.closedDate : position.lastUpdatedDate;
             if (closedDate) {
-                let lastCandleDate =  new Date( Math.floor(closedDate.getTime()  / secsInInterval / 1000) * secsInInterval * 1000);
+                let lastCandleDate =  new Date( Math.floor(closedDate.getTime()  / secsInInterval / 1000) * secsInInterval * 1000);                
                 let pos2s = positionMap[lastCandleDate.toISOString()] 
                 if (!pos2s) pos2s = [];                
                 let included = pos2s.filter(p => (p.transactionId === position.transactionId));   
@@ -132,10 +132,7 @@ class BotPositionsChart extends React.Component {
 
     sameCandleDate = (positionDate, candleDate, candleIntervalSecs) => {
         let poistionCandleDate =  new Date( Math.floor(positionDate.getTime()  / candleIntervalSecs / 1000) * candleIntervalSecs * 1000);        
-        let sameCandle = candleDate.getTime() === poistionCandleDate.getTime();    
-
-        console.log("positionDate: ", positionDate.toISOString(), "candleDate", candleDate.toISOString(), "sameCandle: ", sameCandle);
-      
+        let sameCandle = candleDate.getTime() === poistionCandleDate.getTime();
         return sameCandle;
     }
 
@@ -182,16 +179,12 @@ class BotPositionsChart extends React.Component {
             secs = 0;
         }
 
-        console.log("secsForInterval() interval: ", interval, "secs: ", secs);
-
         return secs;
     }
 
 
     makeAnnotationInfo = (date, positions, secsInInterval, annotations)  => {
 
-       
-    
         let logInfo = annotations[date.toISOString()];
         let infoSymbol = logInfo && logInfo.info.length > 0 ? "ⓘ" : undefined;
         let logText = logInfo && logInfo.info.length > 0 ?  logInfo.info : undefined;
@@ -212,15 +205,12 @@ class BotPositionsChart extends React.Component {
         positions && positions.forEach(position => {
         
             let openPosition = this.sameCandleDate(position.openDate, date, secsInInterval);   
-    
-        
-
+ 
             let closedDate = position.closedDate ? position.closedDate : position.lastUpdatedDate;     // date.toISOString() === position.createdOn;
             let closedPosition = position.closedDate && this.sameCandleDate(closedDate, date, secsInInterval); // date.toISOString() === position.lastUpdated;
             let stopped = closedPosition && position.stopped === true;  
     
-            style =  openPosition ? "point { color: #000000; fill-color: #0000FF }" :
-                     stopped ? "point { color: #FF0000; fill-color: #FF0000 }" : 
+            style =  openPosition ? "point { color: #000000; fill-color: #0000FF }" :              
                      closedPosition && position.pnl >= 0 ? "point { color: #000000; fill-color: #00FF00 }" :
                      closedPosition && position.pnl < 0 ? "point { color: #000000; fill-color: #FF0000 }" :
                      null;
@@ -228,8 +218,8 @@ class BotPositionsChart extends React.Component {
             let openSymbol = openPosition && position.side === 'BUY' ? "▲" :
                              openPosition &&  position.side === 'SELL' ? "▼" :'n/a'
     
-            let closeSymbol = closedPosition &&  position.side === 'BUY' ? "■" :
-                              closedPosition &&  position.side === 'SELL' ? "■" : 'n/a'
+            let closeSymbol = closedPosition &&  position.side === 'BUY' ? "▼" :
+                              closedPosition &&  position.side === 'SELL' ? "▲" : 'n/a'
       
             dateFormatted = openPosition && closedPosition ?  this.formatDate(date) :
                             openPosition ? this.formatDate(position.openDate)  : 
@@ -245,14 +235,14 @@ class BotPositionsChart extends React.Component {
             let infoClose = closedPosition && position.infoClose ? ' info: ' + position.infoClose : ''
 
             let events = "";
-            events += openPosition ? "Opened "+position.side+" @ "+position.entryPrice.toFixed(2) + infoOpen : '';
+            events += openPosition ? position.side+" @ "+position.entryPrice.toFixed(2) + infoOpen : '';
 
             events += closedPosition && stopped ? " Stopped @ "+position.lastPrice.toFixed(2)  :
-                      closedPosition ? " Closed "+position.side+" @ "+position.lastPrice.toFixed(2) + infoClose:'';
+                      closedPosition ? " Closed @ "+position.lastPrice.toFixed(2) + infoClose:'';
     
             // concatenate annotations from multiple positions on the same candle
             annotationText = count > 0 ? annotationText + " | " : annotationText;
-            annotationText += dateFormatted + " " + events + " " + pnlInfo;
+            annotationText += (events + " " + pnlInfo);
 
             count++;
         })

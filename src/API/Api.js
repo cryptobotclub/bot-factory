@@ -64,13 +64,13 @@ class Api {
     
     async submitExecution(botSettings, datafeedSettings, positionSettings) {
 
+
       let data = {
         botSettings,
         datafeedSettings,
         positionSettings,
       }
       
-      console.log("submitExecution() ", data);
 
       return new Promise((resolve, reject) => {
         this.post("exec", data).then(response => {
@@ -83,7 +83,6 @@ class Api {
                   return;
               }
               
-              console.log("submitExecution() response: ", response);
               let { candles, charts, positions, stats, annotations, symbol, interval} = response.response;
              
               positions = this.parsePositions(positions);
@@ -92,7 +91,7 @@ class Api {
               stats = stats;
               symbol = symbol;
               interval = interval;
-              annotations = annotations;
+              annotations = this.parseAnnotations(annotations);
              
               resolve ({
                   candles: candles,
@@ -141,8 +140,9 @@ class Api {
       parsePosition(p) {
 
         let openDate = new Date(Date.parse(p.openDate));
-        let closedDate = new Date(Date.parse(p.closedDate));
-        
+        let closedDate = p.closedDate ? new Date(Date.parse(p.closedDate)) : undefined;
+        let lastUpdatedDate = p.lastUpdatedDate ? new Date(Date.parse(p.lastUpdatedDate)) : undefined;
+
         return {
           transactionId: p.transactionId,
           side:p.side,
@@ -150,6 +150,7 @@ class Api {
           size: p.size,
           openDate: openDate,
           closedDate: closedDate,
+          lastUpdatedDate: lastUpdatedDate,
           entryPrice: p.entryPrice,
           lastPrice: p.lastPrice,
           stopPrice: p.stopPrice,
@@ -159,6 +160,7 @@ class Api {
           stopped : p.stopped,
           exited : p.exited,
           info: p.info,
+          infoClose: p.infoClose,
           fees: p.fees,
         };
       }
@@ -170,6 +172,26 @@ class Api {
         return positions;
       }
     
+      parseAnnotations(annotationsJson) {
+        
+        let annotations = {}
+        let keys = Object.keys(annotationsJson);
+        
+        keys.forEach(key => {
+
+            let value = annotationsJson[key]
+            let date = new Date(Date.parse(value.date));
+            annotations[key] = {
+              date: date,
+              info: value.info,
+            }
+        })
+
+        return annotations;
+      }
+
+
+
       parseCandles (candleJson) {
     
         var candles = candleJson.map(p => {

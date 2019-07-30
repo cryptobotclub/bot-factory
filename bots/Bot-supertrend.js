@@ -1,4 +1,17 @@
 class Bot {
+
+  constructor() {
+    this.datafeeds = [
+        {
+            exchange: "BINANCE",
+            symbol: "BTCUSDT",
+            interval: "1d",
+            rollingWindowSize: 15,
+        }
+    ]
+  }
+
+
   init() {
     return {
       supertrend: {
@@ -22,34 +35,43 @@ class Bot {
   }
 
 
-  process(candle) {
-
-    if (this.state.candles.length < 1) return;
-
-    let high = this.state.candles.map(p => p.high);
-    let low = this.state.candles.map(p => p.low);
-    let close = this.state.candles.map(p => p.close);
-
+  process(candle, slice) {
     
-    let supertrend = this.supertrend(candle, {
+    let candles0 = slice[1].candles;
+
+    if (candles0.length < 15) {
+      this.plot("supertrend", 0, 0);
+      return;
+    }
+
+
+    let last = candles0[candles0.length-1];
+
+    let high = candles0.map(p => p.high);
+    let low = candles0.map(p => p.low);
+    let close = candles0.map(p => p.close);
+ 
+    let supertrend = this.supertrend(last, {
       high: high,
       low: low,
       close: close,
       period: 14
     });
-   
-    if (supertrend === 1)  {
-        this.signal({
-            signal: 'BUY',
-        })
+
+  
+    this.plot("supertrend", supertrend.close, supertrend.supertrend);
+
+    if (supertrend.signal === 1)  {
+      this.signal({
+          signal: 'BUY',
+      })
     }
   
-    if (supertrend === -1)  {
-        this.signal({
-            signal: 'SELL',
-        });
+    if (supertrend.signal === -1)  {
+      this.signal({
+          signal: 'SELL',
+      });
     }
-      
 
   }
 
@@ -63,8 +85,9 @@ class Bot {
     let atr = result.pop();
     this.state.count++;
 
-
-    if (!atr) return;
+    if (!atr) return ({ 
+        signal: 0,
+    });
    
     this.state.supertrend.upperBandBasic = (candle.high + candle.low) / 2 + bandFactor * atr;
     this.state.supertrend.lowerBandBasic = (candle.high + candle.low) / 2 - bandFactor * atr;
@@ -77,7 +100,6 @@ class Bot {
     else this.state.supertrend.upperBand = this.state.lastSupertrend.upperBand;
 
  
-
     if (
       this.state.supertrend.lowerBandBasic > this.state.lastSupertrend.lowerBand ||
       this.state.lastClose < this.state.lastSupertrend.lowerBand
@@ -126,7 +148,11 @@ class Bot {
       signal = -1
     }
 
-    return signal;
+    return ({ 
+        signal: signal,
+        close: candle.close,
+        supertrend: this.state.supertrend.supertrend,
+    }); ;
   }
 
 }
